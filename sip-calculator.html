@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIP Calculator - Estimate Your Mutual Fund Returns | PaisaWise</title>
+<meta name="description" content="Free SIP calculator to estimate mutual fund investment growth. See your invested amount, wealth gained, and maturity value instantly.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #FAFAF8;
+    --panel: #FFFFFF;
+    --ink: #16212B;
+    --ink-soft: #5B6672;
+    --navy: #132A3A;
+    --navy-soft: #1E3E52;
+    --emerald: #1E8E5A;
+    --emerald-soft: #E4F3EC;
+    --gold: #B8862E;
+    --gold-soft: #F6EEDD;
+    --line: #E7E4DC;
+    --radius: 14px;
+  }
+  *{ box-sizing: border-box; }
+  html, body{ margin:0; padding:0; }
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+  .wrap{ max-width: 880px; margin: 0 auto; padding: 0 20px 80px; }
+
+  /* SITE NAV */
+  nav.sitenav{
+    background: var(--navy);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .nav-inner{
+    max-width: 880px; margin: 0 auto; padding: 16px 20px;
+    display:flex; align-items:center; justify-content: space-between;
+  }
+  .brand{
+    display:flex; align-items:center; gap: 9px;
+    font-family:'Fraunces', serif; font-weight: 600; font-size: 18px; color: #F3F0E8;
+    text-decoration:none;
+  }
+  .brand .dot{ width:9px; height:9px; border-radius:50%; background: var(--emerald); display:inline-block; }
+  .nav-links{ display:flex; gap: 22px; }
+  .nav-links a{
+    color: #B9C4CB; text-decoration:none; font-size: 13.5px; font-weight: 500;
+    padding: 6px 0; border-bottom: 2px solid transparent; transition: color .2s, border-color .2s;
+  }
+  .nav-links a:hover{ color: #F3F0E8; }
+  .nav-links a.active{ color: #9FD8BB; border-color: var(--emerald); }
+  @media (max-width: 560px){ .nav-links{ gap: 14px; } .nav-links a{ font-size: 12.5px; } }
+
+  /* HERO */
+  header.hero{
+    background: var(--navy);
+    color: #F3F0E8;
+    padding: 40px 20px 64px;
+    position: relative;
+    overflow: hidden;
+  }
+  header.hero::after{
+    content:"";
+    position:absolute; right:-80px; top:-80px;
+    width:280px; height:280px; border-radius:50%;
+    background: radial-gradient(circle, rgba(184,134,46,0.32), transparent 70%);
+  }
+  .hero-inner{ max-width: 880px; margin:0 auto; position:relative; z-index:1; }
+  .eyebrow{
+    font-size: 12.5px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: #9FD8BB; font-weight: 600; margin-bottom: 14px;
+  }
+  h1{
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: clamp(28px, 4.5vw, 40px);
+    line-height: 1.15;
+    margin: 0 0 12px;
+    letter-spacing: -0.01em;
+  }
+  .hero p{
+    color: #C9D3D8; font-size: 15.5px; max-width: 540px; margin: 0;
+  }
+
+  /* CARD */
+  .card{
+    background: var(--panel);
+    border-radius: var(--radius);
+    box-shadow: 0 18px 40px -18px rgba(19,42,58,0.28);
+    margin-top: -40px;
+    position: relative; z-index: 2;
+    padding: 32px;
+    border: 1px solid var(--line);
+  }
+  @media (max-width: 640px){ .card{ padding: 22px; } }
+
+  .field{ margin-bottom: 26px; }
+  .field-top{
+    display:flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 10px;
+  }
+  .field label{ font-weight: 600; font-size: 14px; color: var(--ink); }
+  .field .val{
+    font-family: 'Fraunces', serif; font-weight: 600; font-size: 18px; color: var(--navy);
+    font-variant-numeric: tabular-nums;
+  }
+  input[type=range]{
+    -webkit-appearance: none; appearance: none;
+    width: 100%; height: 6px; border-radius: 4px;
+    background: var(--line); outline: none; margin-top: 4px;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance: none; appearance: none;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--gold); cursor: pointer;
+    border: 3px solid #fff; box-shadow: 0 2px 8px rgba(184,134,46,0.5);
+  }
+  input[type=range]::-moz-range-thumb{
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--gold); cursor: pointer; border: 3px solid #fff;
+    box-shadow: 0 2px 8px rgba(184,134,46,0.5);
+  }
+  .field-sub{ font-size: 12.5px; color: var(--ink-soft); margin-top: 6px; }
+
+  /* RESULT */
+  .result{
+    background: var(--gold-soft);
+    border-radius: 12px;
+    padding: 24px 26px;
+    margin-top: 8px;
+    display:flex; flex-wrap: wrap; gap: 22px; align-items: center;
+    justify-content: space-between;
+  }
+  .result .headline-num{
+    font-family:'Fraunces', serif; font-weight: 700;
+    font-size: clamp(30px, 5vw, 40px);
+    color: var(--navy);
+    font-variant-numeric: tabular-nums;
+  }
+  .result .headline-label{
+    font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.1em;
+    color: #8A6522; font-weight: 700; margin-bottom: 4px;
+  }
+  .mini-stats{ display:flex; gap: 28px; flex-wrap: wrap; }
+  .mini-stats div .n{
+    font-weight: 700; font-size: 17px; color: var(--navy); font-variant-numeric: tabular-nums;
+  }
+  .mini-stats div .l{ font-size: 12px; color: var(--ink-soft); }
+
+  /* CHART - signature element */
+  .chart-wrap{ margin-top: 30px; }
+  .chart-label-row{
+    display:flex; justify-content: space-between; font-size: 13px; font-weight: 600; margin-bottom: 12px;
+    color: var(--ink);
+  }
+  .chart-box{ position: relative; }
+  .legend{ display:flex; gap: 18px; margin-top: 10px; font-size: 12.5px; color: var(--ink-soft); justify-content: center; }
+  .legend span{ display:inline-flex; align-items:center; gap:6px; }
+  .dot{ width:9px; height:9px; border-radius:50%; display:inline-block; }
+
+  .split-bar{
+    height: 14px; border-radius: 999px; overflow: hidden; display:flex;
+    background: var(--line); margin-top: 20px;
+  }
+  .split-invested{ background: var(--navy-soft); transition: width 0.35s ease; }
+  .split-gain{ background: var(--emerald); transition: width 0.35s ease; }
+
+  /* CONTENT / SEO */
+  .content{ margin-top: 52px; }
+  .content h2{
+    font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600; color: var(--navy);
+    margin: 34px 0 12px;
+  }
+  .content p{ color: #3B444C; font-size: 15px; margin: 0 0 14px; }
+  .content ul{ color: #3B444C; font-size: 15px; padding-left: 20px; }
+  .content li{ margin-bottom: 8px; }
+
+  .formula-box{
+    font-family:'Fraunces',serif; font-size:16px; color:var(--navy);
+    background:var(--gold-soft); padding:14px 18px; border-radius:10px; display:inline-block;
+  }
+
+  /* related tools */
+  .related{
+    margin-top: 44px; padding: 22px; background: var(--panel); border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+  .related h3{ font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-soft); margin: 0 0 14px; }
+  .related a{
+    display:flex; align-items:center; justify-content: space-between;
+    text-decoration:none; color: var(--navy); font-weight: 600; font-size: 15px;
+    padding: 12px 14px; border-radius: 8px; background: var(--bg);
+  }
+  .related a span.arrow{ color: var(--emerald); font-weight: 700; }
+
+  footer{
+    text-align:center; color: var(--ink-soft); font-size: 12.5px; margin-top: 50px;
+  }
+</style>
+</head>
+<body>
+
+<nav class="sitenav">
+  <div class="nav-inner">
+    <a href="index.html" class="brand"><span class="dot"></span>PaisaWise</a>
+    <div class="nav-links">
+      <a href="emi-calculator.html">EMI Calculator</a>
+      <a href="index.html" class="active">SIP Calculator</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">Personal Finance Tools</div>
+    <h1>SIP Calculator</h1>
+    <p>See how your monthly mutual fund investment can grow over time. Adjust the sliders below to explore different amounts, durations, and expected returns.</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="card">
+
+    <div class="field">
+      <div class="field-top">
+        <label for="monthly">Monthly Investment</label>
+        <span class="val" id="monthlyVal">₹5,000</span>
+      </div>
+      <input type="range" id="monthly" min="500" max="200000" step="500" value="5000">
+      <div class="field-sub">Amount you plan to invest every month</div>
+    </div>
+
+    <div class="field">
+      <div class="field-top">
+        <label for="years">Investment Duration</label>
+        <span class="val" id="yearsVal">15 yrs</span>
+      </div>
+      <input type="range" id="years" min="1" max="40" step="1" value="15">
+      <div class="field-sub">Number of years you'll stay invested</div>
+    </div>
+
+    <div class="field">
+      <div class="field-top">
+        <label for="returnRate">Expected Annual Return</label>
+        <span class="val" id="returnVal">12%</span>
+      </div>
+      <input type="range" id="returnRate" min="1" max="30" step="0.5" value="12">
+      <div class="field-sub">Long-term equity mutual funds have historically averaged 10–14%</div>
+    </div>
+
+    <div class="result">
+      <div>
+        <div class="headline-label">Maturity Value</div>
+        <div class="headline-num" id="maturityOut">₹25,22,880</div>
+      </div>
+      <div class="mini-stats">
+        <div><div class="n" id="investedOut">₹9,00,000</div><div class="l">Total Invested</div></div>
+        <div><div class="n" id="gainOut">₹16,22,880</div><div class="l">Wealth Gained</div></div>
+      </div>
+    </div>
+
+    <div class="chart-wrap">
+      <div class="chart-label-row">
+        <span>Growth Over Time</span>
+      </div>
+      <div class="chart-box">
+        <svg id="growthChart" viewBox="0 0 700 220" style="width:100%; height:auto; display:block;"></svg>
+      </div>
+      <div class="legend">
+        <span><span class="dot" style="background:var(--navy-soft)"></span>Amount Invested</span>
+        <span><span class="dot" style="background:var(--emerald)"></span>Total Value</span>
+      </div>
+
+      <div class="split-bar">
+        <div class="split-invested" id="splitInvested" style="width:36%"></div>
+        <div class="split-gain" id="splitGain" style="width:64%"></div>
+      </div>
+      <div class="legend">
+        <span><span class="dot" style="background:var(--navy-soft)"></span>Invested</span>
+        <span><span class="dot" style="background:var(--emerald)"></span>Gains</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="content">
+    <h2>What is a SIP?</h2>
+    <p>A Systematic Investment Plan (SIP) lets you invest a fixed amount into a mutual fund every month, instead of putting in a lump sum. Over time, this builds discipline, smooths out market ups and downs (called rupee-cost averaging), and lets compounding work in your favor — the longer you stay invested, the faster your wealth tends to grow in the later years.</p>
+
+    <h2>How is SIP return calculated?</h2>
+    <p>The calculator above uses the standard compound growth formula for a series of monthly investments:</p>
+    <p class="formula-box">M = P × [(1+i)^n − 1] / i × (1+i)</p>
+    <p>Where M is the maturity amount, P is your monthly investment, i is the monthly rate of return, and n is the total number of months invested.</p>
+
+    <h2>Why starting early matters</h2>
+    <ul>
+      <li>A SIP started 10 years earlier can outgrow one with double the monthly amount, purely due to compounding time.</li>
+      <li>Small, consistent monthly investments often beat trying to time the market with lump sums.</li>
+      <li>Increasing your SIP amount gradually as your income grows (a "step-up SIP") can significantly boost your final corpus.</li>
+    </ul>
+  </div>
+
+  <div class="related">
+    <h3>Related Tools</h3>
+    <a href="emi-calculator.html">Calculate your Loan EMI <span class="arrow">→</span></a>
+  </div>
+
+  <footer>PaisaWise · This calculator is for estimation purposes only and does not constitute financial advice. Actual mutual fund returns are not guaranteed.</footer>
+</div>
+
+<script>
+  const monthlyEl = document.getElementById('monthly');
+  const yearsEl = document.getElementById('years');
+  const returnEl = document.getElementById('returnRate');
+
+  const monthlyVal = document.getElementById('monthlyVal');
+  const yearsVal = document.getElementById('yearsVal');
+  const returnVal = document.getElementById('returnVal');
+
+  const maturityOut = document.getElementById('maturityOut');
+  const investedOut = document.getElementById('investedOut');
+  const gainOut = document.getElementById('gainOut');
+  const splitInvested = document.getElementById('splitInvested');
+  const splitGain = document.getElementById('splitGain');
+  const chartSvg = document.getElementById('growthChart');
+
+  function formatINR(num){
+    return '₹' + Math.round(num).toLocaleString('en-IN');
+  }
+
+  function computeSeries(P, years, annualRate){
+    const i = annualRate / 12 / 100;
+    const totalMonths = years * 12;
+    const points = [];
+    for (let y = 0; y <= years; y++){
+      const n = y * 12;
+      let value;
+      if (n === 0){ value = 0; }
+      else if (i === 0){ value = P * n; }
+      else { value = P * ((Math.pow(1+i, n) - 1) / i) * (1+i); }
+      const invested = P * n;
+      points.push({ year: y, value, invested });
+    }
+    return points;
+  }
+
+  function drawChart(points){
+    const w = 700, h = 220, padL = 40, padB = 24, padT = 10, padR = 10;
+    const maxVal = Math.max(...points.map(p => p.value), 1);
+    const xStep = (w - padL - padR) / (points.length - 1);
+    const yScale = (h - padT - padB) / maxVal;
+
+    const toX = i => padL + i * xStep;
+    const toY = v => h - padB - v * yScale;
+
+    let valuePath = '';
+    let investedPath = '';
+    points.forEach((p, idx) => {
+      const x = toX(idx);
+      valuePath += (idx === 0 ? 'M' : 'L') + x + ',' + toY(p.value) + ' ';
+      investedPath += (idx === 0 ? 'M' : 'L') + x + ',' + toY(p.invested) + ' ';
+    });
+
+    const areaPath = valuePath + `L${toX(points.length-1)},${h-padB} L${toX(0)},${h-padB} Z`;
+
+    let svg = '';
+    svg += `<defs>
+      <linearGradient id="areaFill" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#1E8E5A" stop-opacity="0.28"/>
+        <stop offset="100%" stop-color="#1E8E5A" stop-opacity="0.02"/>
+      </linearGradient>
+    </defs>`;
+    // gridlines
+    for (let g = 0; g <= 3; g++){
+      const gy = padT + g * (h - padT - padB) / 3;
+      svg += `<line x1="${padL}" y1="${gy}" x2="${w-padR}" y2="${gy}" stroke="#E7E4DC" stroke-width="1"/>`;
+    }
+    svg += `<path d="${areaPath}" fill="url(#areaFill)" stroke="none"/>`;
+    svg += `<path d="${investedPath}" fill="none" stroke="#1E3E52" stroke-width="2.5" stroke-dasharray="5,4" stroke-linecap="round"/>`;
+    svg += `<path d="${valuePath}" fill="none" stroke="#1E8E5A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
+
+    // end dot
+    const lastIdx = points.length - 1;
+    svg += `<circle cx="${toX(lastIdx)}" cy="${toY(points[lastIdx].value)}" r="5" fill="#1E8E5A" stroke="#fff" stroke-width="2"/>`;
+
+    // x-axis labels (start, mid, end year)
+    const labelIdxs = [0, Math.floor(lastIdx/2), lastIdx];
+    labelIdxs.forEach(idx => {
+      svg += `<text x="${toX(idx)}" y="${h-6}" font-size="11" fill="#5B6672" text-anchor="middle" font-family="Inter, sans-serif">Yr ${points[idx].year}</text>`;
+    });
+
+    chartSvg.innerHTML = svg;
+  }
+
+  function calculate(){
+    const P = parseFloat(monthlyEl.value);
+    const years = parseInt(yearsEl.value);
+    const annualRate = parseFloat(returnEl.value);
+
+    monthlyVal.textContent = formatINR(P);
+    yearsVal.textContent = years + ' yrs';
+    returnVal.textContent = annualRate.toFixed(1) + '%';
+
+    const points = computeSeries(P, years, annualRate);
+    const final = points[points.length - 1];
+    const invested = final.invested;
+    const maturity = final.value;
+    const gain = maturity - invested;
+
+    maturityOut.textContent = formatINR(maturity);
+    investedOut.textContent = formatINR(invested);
+    gainOut.textContent = formatINR(gain);
+
+    const investedPct = Math.max(2, (invested / maturity) * 100);
+    const gainPct = 100 - investedPct;
+    splitInvested.style.width = investedPct + '%';
+    splitGain.style.width = gainPct + '%';
+
+    drawChart(points);
+  }
+
+  [monthlyEl, yearsEl, returnEl].forEach(el => el.addEventListener('input', calculate));
+  calculate();
+</script>
+
+</body>
+</html>

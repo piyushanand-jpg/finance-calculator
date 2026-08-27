@@ -166,9 +166,55 @@
   footer{
     text-align:center; color: var(--ink-soft); font-size: 12.5px; margin-top: 50px;
   }
+
+  /* SITE NAV */
+  nav.sitenav{
+    background: var(--navy);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .nav-inner{
+    max-width: 880px; margin: 0 auto; padding: 16px 20px;
+    display:flex; align-items:center; justify-content: space-between;
+  }
+  .brand{
+    display:flex; align-items:center; gap: 9px;
+    font-family:'Fraunces', serif; font-weight: 600; font-size: 18px; color: #F3F0E8;
+    text-decoration:none;
+  }
+  .brand .navdot{ width:9px; height:9px; border-radius:50%; background: var(--emerald); display:inline-block; }
+  .nav-links{ display:flex; gap: 22px; }
+  .nav-links a{
+    color: #B9C4CB; text-decoration:none; font-size: 13.5px; font-weight: 500;
+    padding: 6px 0; border-bottom: 2px solid transparent; transition: color .2s, border-color .2s;
+  }
+  .nav-links a:hover{ color: #F3F0E8; }
+  .nav-links a.active{ color: #9FD8BB; border-color: var(--emerald); }
+  @media (max-width: 560px){ .nav-links{ gap: 14px; } .nav-links a{ font-size: 12.5px; } }
+
+  .related{
+    margin-top: 44px; padding: 22px; background: var(--panel); border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+  .related h3{ font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-soft); margin: 0 0 14px; }
+  .related a{
+    display:flex; align-items:center; justify-content: space-between;
+    text-decoration:none; color: var(--navy); font-weight: 600; font-size: 15px;
+    padding: 12px 14px; border-radius: 8px; background: var(--bg);
+  }
+  .related a span.arrow{ color: var(--emerald); font-weight: 700; }
 </style>
 </head>
 <body>
+
+<nav class="sitenav">
+  <div class="nav-inner">
+    <a href="index.html" class="brand"><span class="navdot"></span>PaisaWise</a>
+    <div class="nav-links">
+      <a href="index.html" class="active">EMI Calculator</a>
+      <a href="sip-calculator.html">SIP Calculator</a>
+    </div>
+  </div>
+</nav>
 
 <header class="hero">
   <div class="hero-inner">
@@ -254,7 +300,12 @@
     </ul>
   </div>
 
-  <footer>Built with care · This calculator is for estimation purposes only and does not constitute financial advice.</footer>
+  <div class="related">
+    <h3>Related Tools</h3>
+    <a href="sip-calculator.html">Calculate your SIP Returns <span class="arrow">→</span></a>
+  </div>
+
+  <footer>PaisaWise · This calculator is for estimation purposes only and does not constitute financial advice.</footer>
 </div>
 
 <script>
