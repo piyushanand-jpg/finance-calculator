@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Night Krishna Was Born</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink: #050810;
+    --storm1: #0A0E1F;
+    --storm2: #131834;
+    --river: #0C1B3A;
+    --gold: #E8B84B;
+    --gold-soft: #F6DFA0;
+    --peacock: #0E7C6B;
+    --peacock2: #2ED1B0;
+    --dawn1: #2B1B4D;
+    --dawn2: #8A3B5C;
+    --dawn3: #E8783A;
+    --cream: #FBF3DE;
+  }
+  *{ box-sizing: border-box; margin:0; padding:0; }
+  html,body{ height:100%; overscroll-behavior:none; }
+  body{
+    font-family: 'Inter', sans-serif; color: var(--cream); background: var(--ink);
+    overflow: hidden; height: 100vh; position: relative;
+  }
+  .scene{
+    position: absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    opacity: 0; visibility: hidden; transition: opacity 1.1s ease;
+    text-align: center; padding: 30px;
+  }
+  .scene.active{ opacity: 1; visibility: visible; z-index: 5; }
+  canvas#fx{ position:absolute; inset:0; width:100%; height:100%; z-index: 1; pointer-events:none; }
+
+  .tap-hint{
+    position: absolute; bottom: 28px; left:50%; transform: translateX(-50%);
+    font-size: 12px; color: rgba(251,243,222,0.55); letter-spacing: 0.08em; text-transform: uppercase;
+    z-index: 6; animation: pulseHint 2s ease-in-out infinite;
+  }
+  @keyframes pulseHint{ 0%,100%{ opacity:0.4; } 50%{ opacity:0.9; } }
+
+  .eyebrow{ font-size: 11.5px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--peacock2); margin-bottom: 18px; z-index: 3; position:relative; }
+  h2.line{
+    font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 500;
+    font-size: clamp(20px, 4.4vw, 30px); max-width: 480px; line-height: 1.5; z-index: 3; position: relative;
+    color: #E7E2F5;
+  }
+
+  /* ===== SCENE 1: STORM ===== */
+  #storm{ background: radial-gradient(ellipse at 50% 0%, var(--storm2), var(--storm1) 70%); }
+  .flash{ position:absolute; inset:0; background:#fff; opacity:0; z-index:2; pointer-events:none; }
+  .flash.on{ animation: flashBolt 0.35s ease-out; }
+  @keyframes flashBolt{ 0%{opacity:0.4;} 40%{opacity:0.02;} 60%{opacity:0.28;} 100%{opacity:0;} }
+
+  .bolt{
+    position:absolute; top:0; z-index:3; pointer-events:none;
+    opacity:0; filter: drop-shadow(0 0 12px rgba(220,230,255,0.9)) drop-shadow(0 0 26px rgba(140,170,255,0.5));
+  }
+  .bolt.on{ animation: boltShow 0.45s ease-out; }
+  @keyframes boltShow{
+    0%{ opacity:0; }
+    8%{ opacity:1; }
+    18%{ opacity:0.2; }
+    26%{ opacity:1; }
+    45%{ opacity:0; }
+    100%{ opacity:0; }
+  }
+
+  /* ===== SCENE 2: RIVER CROSSING ===== */
+  #river{ background: linear-gradient(180deg, var(--storm1) 0%, var(--river) 55%, #081226 100%); }
+  .waves{ position:absolute; bottom:0; left:0; width:100%; z-index:2; }
+  .wave-path{ animation: waveMove 6s linear infinite; }
+  @keyframes waveMove{ from{ transform: translateX(0); } to{ transform: translateX(-200px); } }
+
+  .journey{ position:absolute; bottom: 74px; left: -18%; z-index:3; animation: crossRiver 9s ease-in-out forwards; }
+  @keyframes crossRiver{ 0%{ left:-18%; } 100%{ left: 96%; } }
+  .hood-bob{ animation: hoodBob 1.6s ease-in-out infinite; transform-origin: bottom center; }
+  @keyframes hoodBob{ 0%,100%{ transform: translateY(0) rotate(-1deg); } 50%{ transform: translateY(-4px) rotate(1deg); } }
+
+  /* ===== SCENE 3: DAWN ===== */
+  #dawn{ background: linear-gradient(180deg, var(--dawn1) 0%, var(--dawn2) 55%, var(--dawn3) 100%); }
+  .sun{
+    position:absolute; bottom: -60px; left:50%; transform: translateX(-50%);
+    width: 220px; height: 220px; border-radius:50%;
+    background: radial-gradient(circle, #FFE9B0, var(--gold) 60%, transparent 75%);
+    box-shadow: 0 0 100px 40px rgba(232,184,75,0.35);
+    animation: sunRise 3.4s ease-out forwards;
+    z-index:1;
+  }
+  @keyframes sunRise{ from{ transform: translate(-50%, 140px) scale(0.7); opacity:0; } to{ transform: translate(-50%, 40px) scale(1); opacity:1; } }
+
+  /* ===== SCENE 4: CELEBRATION ===== */
+  #celebrate{ background: radial-gradient(ellipse at 50% 20%, #241B4D, var(--ink) 75%); }
+  h1.mega{
+    font-family: 'Fraunces', serif; font-weight: 800;
+    font-size: clamp(32px, 7vw, 58px); color: var(--gold-soft);
+    text-shadow: 0 0 30px rgba(232,184,75,0.5); z-index:3; position:relative;
+  }
+  .peacocks{
+    display:flex; gap: 14px; margin-top: 18px; z-index:3; position:relative;
+  }
+  .pf{ font-size: 26px; animation: pfSway 2.6s ease-in-out infinite; }
+  .pf:nth-child(2){ animation-delay: 0.3s; }
+  .pf:nth-child(3){ animation-delay: 0.6s; }
+  @keyframes pfSway{ 0%,100%{ transform: rotate(-6deg); } 50%{ transform: rotate(6deg); } }
+
+  /* ===== SCENE 5: PERSONALIZE ===== */
+  #personalize{ background: radial-gradient(ellipse at 50% 30%, #241B4D, var(--ink) 78%); overflow-y: auto; padding-top: 40px; padding-bottom: 40px; }
+  .name-form{ z-index:3; position:relative; display:flex; flex-direction:column; align-items:center; gap: 16px; margin-top: 8px; }
+  .name-form input{
+    background: rgba(251,243,222,0.06); border: 1px solid rgba(232,184,75,0.4);
+    color: var(--cream); padding: 13px 18px; border-radius: 30px; font-size: 15px;
+    text-align:center; width: 260px; outline:none; font-family:'Inter', sans-serif;
+  }
+  .name-form input::placeholder{ color: rgba(251,243,222,0.4); }
+  .name-form button{
+    background: linear-gradient(135deg, var(--gold), #C9932E); color: #241605; border:none;
+    padding: 13px 30px; border-radius: 30px; font-weight: 700; font-size: 14px; cursor: pointer;
+    box-shadow: 0 8px 22px -8px rgba(232,184,75,0.6); transition: transform 0.15s ease;
+  }
+  .name-form button:hover{ transform: translateY(-2px); }
+
+  .diya-card{
+    display:none; z-index:3; position:relative; text-align:center;
+    animation: cardIn 0.7s ease forwards;
+  }
+  .diya-card.show{ display:block; }
+  @keyframes cardIn{ from{ opacity:0; transform: translateY(16px) scale(0.96); } to{ opacity:1; transform: translateY(0) scale(1); } }
+  .flame-big{
+    width: 22px; height: 36px; margin: 0 auto 6px;
+    background: radial-gradient(ellipse at bottom, #FFEA9E 0%, #F6B93B 45%, #E8683A 80%, transparent 100%);
+    border-radius: 50% 50% 50% 50% / 65% 65% 35% 35%;
+    animation: flicker 1.4s ease-in-out infinite; filter: drop-shadow(0 0 18px rgba(246,185,59,0.7));
+  }
+  @keyframes flicker{ 0%,100%{ transform: scaleY(1) rotate(-1deg);} 50%{ transform: scaleY(1.1) rotate(2deg);} }
+  .diya-name{
+    font-family:'Cormorant Garamond', serif; font-style:italic; font-size: clamp(22px,5vw,34px);
+    color: var(--gold-soft); margin: 6px 0 4px;
+  }
+  .diya-msg{ font-size: 13.5px; color: rgba(251,243,222,0.7); max-width: 360px; margin: 8px auto 0; line-height:1.6; }
+  .replay{
+    margin-top: 22px; background: none; border: 1px solid rgba(251,243,222,0.25); color: rgba(251,243,222,0.65);
+    padding: 9px 20px; border-radius: 20px; font-size: 12.5px; cursor: pointer;
+  }
+  .mini-diya{
+    display:flex; align-items:center; gap:6px;
+    background: rgba(232,184,75,0.08); border: 1px solid rgba(232,184,75,0.25);
+    padding: 6px 12px; border-radius: 16px; font-size: 12.5px; color: var(--gold-soft);
+    animation: miniPop 0.4s ease forwards; opacity:0; transform: scale(0.8);
+    white-space: nowrap; flex-shrink: 0;
+  }
+  @keyframes miniPop{ to{ opacity:1; transform: scale(1); } }
+  .mini-flame{
+    width: 6px; height: 10px; border-radius: 50% 50% 50% 50% / 65% 65% 35% 35%;
+    background: radial-gradient(ellipse at bottom, #FFEA9E, #F6B93B 55%, #E8683A 90%, transparent);
+    animation: flicker 1.5s ease-in-out infinite;
+  }
+  .wall-empty{ font-size:12.5px; color: rgba(251,243,222,0.4); }
+
+  #petalCanvas{ position:absolute; inset:0; width:100%; height:100%; z-index:2; pointer-events:none; }
+</style>
+</head>
+<body>
+
+<canvas id="fx"></canvas>
+<canvas id="petalCanvas"></canvas>
+
+<!-- SCENE 1: STORM -->
+<div class="scene active" id="storm">
+  <div class="flash" id="flashEl"></div>
+  <svg class="bolt" id="boltEl" width="80" height="100vh" viewBox="0 0 80 400" preserveAspectRatio="none" style="height:100%;">
+    <path d="M42 0 L18 160 L38 160 L10 400 L64 130 L42 130 Z" fill="#EAF0FF"/>
+  </svg>
+  <div class="eyebrow">Somewhere in Mathura, centuries ago</div>
+  <h2 class="line">The sky tore open with thunder. Rain fell like it wanted to drown the world. And in a prison cell, a child was about to be born who would change everything.</h2>
+  <div class="tap-hint">tap to continue</div>
+</div>
+
+<!-- SCENE 2: RIVER CROSSING -->
+<div class="scene" id="river">
+  <div class="eyebrow">Midnight. The Yamuna is in flood.</div>
+  <h2 class="line" style="margin-bottom:60px;">Vasudev steps into the rising water, his newborn cradled in a basket — and above them, unasked, a great serpent spreads its hood to hold back the rain.</h2>
+
+  <div class="journey" id="journey">
+    <svg width="140" height="150" viewBox="0 0 140 150">
+      <g class="hood-bob">
+        <path d="M70 10 C 40 20, 25 45, 35 65 C 45 55, 60 48, 70 48 C 80 48, 95 55, 105 65 C 115 45, 100 20, 70 10 Z" fill="#0E7C6B" opacity="0.92"/>
+        <circle cx="55" cy="35" r="4" fill="#E8B84B"/>
+        <circle cx="85" cy="35" r="4" fill="#E8B84B"/>
+      </g>
+      <g fill="#0A0E1F">
+        <circle cx="70" cy="58" r="10"/>
+        <path d="M70 68 C 58 74, 52 92, 56 115 L 66 115 C 64 96, 68 82, 76 74 C 84 82, 88 96, 86 115 L 96 115 C 100 92, 94 74, 82 68 C 78 66, 74 66, 70 68 Z"/>
+      </g>
+      <g>
+        <ellipse cx="55" cy="98" rx="12" ry="8" fill="#8B5A2B"/>
+        <path d="M45 98 Q45 112 55 114 Q65 112 65 98 Z" fill="#A9682F"/>
+      </g>
+    </svg>
+  </div>
+
+  <svg class="waves" viewBox="0 0 800 100" preserveAspectRatio="none" style="height:90px;">
+    <path class="wave-path" d="M0 50 Q 50 20 100 50 T 200 50 T 300 50 T 400 50 T 500 50 T 600 50 T 700 50 T 800 50 T 900 50 T 1000 50 V100 H0 Z" fill="#0C1B3A"/>
+    <path class="wave-path" d="M0 60 Q 50 35 100 60 T 200 60 T 300 60 T 400 60 T 500 60 T 600 60 T 700 60 T 800 60 T 900 60 T 1000 60 V100 H0 Z" fill="#081226" opacity="0.8" style="animation-duration:8s; animation-direction:reverse;"/>
+  </svg>
+  <div class="tap-hint">tap to continue</div>
+</div>
+
+<!-- SCENE 3: DAWN -->
+<div class="scene" id="dawn">
+  <div class="sun"></div>
+  <div class="eyebrow" style="position:relative; z-index:3;">As the storm broke</div>
+  <h2 class="line" style="position:relative; z-index:3; color:#FFF3DD;">Dawn arrived differently that morning. Somewhere, bells rang on their own. The world had a new reason to celebrate.</h2>
+  <div class="tap-hint">tap to continue</div>
+</div>
+
+<!-- SCENE 4: CELEBRATION -->
+<div class="scene" id="celebrate">
+  <div class="eyebrow">Thousands of years later, we still celebrate</div>
+  <h1 class="mega">Happy Janmashtami</h1>
+  <div class="peacocks"><span class="pf">🦚</span><span class="pf">🪈</span><span class="pf">🦚</span></div>
+  <div class="tap-hint">tap to make this yours</div>
+</div>
+
+<!-- SCENE 5: PERSONALIZE -->
+<div class="scene" id="personalize">
+  <div class="eyebrow">Light a diya in your name</div>
+  <h2 class="line" style="margin-bottom: 4px;">Type your name — we'll light one just for you.</h2>
+
+  <div class="name-form" id="nameForm">
+    <input type="text" id="nameInput" placeholder="Your name" maxlength="24">
+    <button id="lightBtn">Light My Diya</button>
+  </div>
+
+  <div class="diya-card" id="diyaCard">
+    <div class="flame-big"></div>
+    <div class="diya-name" id="diyaNameOut">Your Name</div>
+    <div class="diya-msg">May Krishna's flute play peace into your year, and every diya you light bring you a little more light than before.<br><strong>Happy Janmashtami 🦚</strong></div>
+
+    <div class="diya-wall" id="diyaWall" style="margin-top:26px;">
+      <div style="font-size:12px; letter-spacing:0.08em; text-transform:uppercase; color:rgba(251,243,222,0.45); margin-bottom:12px;">Others who lit their diya</div>
+      <div id="diyaWallList" style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center; max-width:340px; max-height:140px; overflow-y:auto; margin:0 auto; padding: 4px;"></div>
+    </div>
+
+    <button class="replay" id="replayBtn">watch it again</button>
+  </div>
+</div>
+
+<script>
+  const scenes = ['storm','river','dawn','celebrate','personalize'];
+  let idx = 0;
+
+  function showScene(i){
+    scenes.forEach((id, si) => {
+      document.getElementById(id).classList.toggle('active', si === i);
+    });
+    if (scenes[i] === 'storm') startLightning();
+    else stopLightning();
+    if (scenes[i] === 'personalize'){
+      document.getElementById('nameForm').style.display = 'flex';
+      document.getElementById('diyaCard').classList.remove('show');
+    }
+  }
+
+  document.body.addEventListener('click', (e) => {
+    if (e.target.closest('.name-form') || e.target.closest('.diya-card')) return;
+    if (idx < scenes.length - 1){
+      idx++;
+      showScene(idx);
+    }
+  });
+
+  // lightning flashes during storm scene
+  let lightningTimer = null;
+  function startLightning(){
+    const flash = document.getElementById('flashEl');
+    const boltEl = document.getElementById('boltEl');
+    function bolt(){
+      flash.classList.remove('on'); void flash.offsetWidth; flash.classList.add('on');
+
+      const leftPct = 10 + Math.random()*80;
+      const scaleX = 0.6 + Math.random()*0.8;
+      const rotate = -6 + Math.random()*12;
+      boltEl.style.left = leftPct + '%';
+      boltEl.style.transform = `translateX(-50%) scaleX(${scaleX}) rotate(${rotate}deg)`;
+      boltEl.classList.remove('on'); void boltEl.offsetWidth; boltEl.classList.add('on');
+
+      lightningTimer = setTimeout(bolt, 1800 + Math.random()*2200);
+    }
+    bolt();
+  }
+  function stopLightning(){ if(lightningTimer) clearTimeout(lightningTimer); }
+
+  // subtle falling petal/spark particles across all scenes (canvas)
+  const petalCanvas = document.getElementById('petalCanvas');
+  const pctx = petalCanvas.getContext('2d');
+  function resizeCanvases(){
+    [petalCanvas, document.getElementById('fx')].forEach(c => {
+      c.width = window.innerWidth; c.height = window.innerHeight;
+    });
+  }
+  resizeCanvases();
+  window.addEventListener('resize', resizeCanvases);
+
+  const drops = Array.from({length: 90}, () => ({
+    x: Math.random()*window.innerWidth,
+    y: Math.random()*window.innerHeight,
+    len: 10 + Math.random()*14,
+    speed: 4 + Math.random()*5,
+    opacity: 0.15 + Math.random()*0.25
+  }));
+
+  function animatePetals(){
+    pctx.clearRect(0,0,petalCanvas.width, petalCanvas.height);
+    const activeId = scenes[idx];
+    if (activeId === 'storm' || activeId === 'river'){
+      pctx.strokeStyle = 'rgba(200,210,255,0.5)';
+      drops.forEach(d => {
+        pctx.globalAlpha = d.opacity;
+        pctx.beginPath();
+        pctx.moveTo(d.x, d.y);
+        pctx.lineTo(d.x - 3, d.y + d.len);
+        pctx.stroke();
+        d.y += d.speed; d.x -= 1.2;
+        if (d.y > petalCanvas.height){ d.y = -20; d.x = Math.random()*petalCanvas.width; }
+      });
+      pctx.globalAlpha = 1;
+    }
+    requestAnimationFrame(animatePetals);
+  }
+  animatePetals();
+
+  // fireworks on celebration scene
+  const fx = document.getElementById('fx');
+  const fctx = fx.getContext('2d');
+  let particles = [];
+  const colors = ['#E8B84B','#2ED1B0','#F4922F','#FBF3DE','#E76F51'];
+
+  function burst(x,y){
+    for (let i=0;i<38;i++){
+      const angle = (Math.PI*2/38)*i + Math.random()*0.2;
+      const speed = 2 + Math.random()*3.4;
+      particles.push({
+        x, y,
+        vx: Math.cos(angle)*speed,
+        vy: Math.sin(angle)*speed,
+        life: 1,
+        color: colors[Math.floor(Math.random()*colors.length)]
+      });
+    }
+  }
+
+  function fireworksLoop(){
+    fctx.clearRect(0,0,fx.width, fx.height);
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.vy += 0.04; p.life -= 0.014;
+      fctx.globalAlpha = Math.max(p.life,0);
+      fctx.fillStyle = p.color;
+      fctx.beginPath(); fctx.arc(p.x, p.y, 2.4, 0, Math.PI*2); fctx.fill();
+    });
+    particles = particles.filter(p => p.life > 0);
+    fctx.globalAlpha = 1;
+    requestAnimationFrame(fireworksLoop);
+  }
+  fireworksLoop();
+
+  let fireworksInterval = null;
+  function startFireworks(){
+    stopFireworks();
+    fireworksInterval = setInterval(() => {
+      burst(80 + Math.random()*(fx.width-160), 100 + Math.random()*(fx.height*0.45));
+    }, 550);
+  }
+  function stopFireworks(){ if (fireworksInterval) clearInterval(fireworksInterval); particles = []; }
+
+  const origShowScene = showScene;
+  showScene = function(i){
+    origShowScene(i);
+    if (scenes[i] === 'celebrate') startFireworks(); else stopFireworks();
+  };
+
+  // ===== Diya Wall (shared names across everyone who opens this link) =====
+  // Uses jsonbin.io free storage. Replace these two values after following the setup steps.
+  const JSONBIN_ID = '6a9a5587f5f4af5e2968813d';
+  const JSONBIN_KEY = '41vPf1KYcdHiRU8zLrdzGO23AOLb1Fp.hr2yBBW';
+  const wallConfigured = JSONBIN_ID.indexOf('PASTE') === -1 && JSONBIN_KEY.indexOf('PASTE') === -1;
+
+  function renderWall(names){
+    const list = document.getElementById('diyaWallList');
+    list.innerHTML = '';
+    if (!names || names.length === 0){
+      list.innerHTML = '<div class="wall-empty">You\'re the first to light one 🪔</div>';
+      return;
+    }
+    names.slice(-40).reverse().forEach((n, i) => {
+      const tag = document.createElement('div');
+      tag.className = 'mini-diya';
+      tag.style.animationDelay = (i*0.05) + 's';
+      tag.innerHTML = '<span class="mini-flame"></span><span>' + n.replace(/</g,'&lt;') + '</span>';
+      list.appendChild(tag);
+    });
+  }
+
+  async function fetchWall(){
+    if (!wallConfigured) { renderWall(JSON.parse(localStorage.getItem('janmashtami_names') || '[]')); return []; }
+    try{
+      const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest`, {
+        headers: { 'X-Master-Key': JSONBIN_KEY }
+      });
+      const data = await res.json();
+      const names = data.record || [];
+      renderWall(names);
+      return names;
+    }catch(err){
+      renderWall(JSON.parse(localStorage.getItem('janmashtami_names') || '[]'));
+      return [];
+    }
+  }
+
+  async function addToWall(name){
+    if (!wallConfigured){
+      const local = JSON.parse(localStorage.getItem('janmashtami_names') || '[]');
+      local.push(name);
+      localStorage.setItem('janmashtami_names', JSON.stringify(local));
+      renderWall(local);
+      return;
+    }
+    try{
+      const existing = await fetchWall();
+      const updated = [...existing, name];
+      await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_KEY },
+        body: JSON.stringify(updated)
+      });
+      renderWall(updated);
+    }catch(err){
+      console.error('Could not save to shared wall', err);
+    }
+  }
+
+  // personalize interaction
+  document.getElementById('lightBtn').addEventListener('click', async (e) => {
+    e.stopPropagation();
+    const name = document.getElementById('nameInput').value.trim() || 'Friend';
+    document.getElementById('diyaNameOut').textContent = name;
+    document.getElementById('nameForm').style.display = 'none';
+    document.getElementById('diyaCard').classList.add('show');
+    burst(fx.width/2, fx.height*0.35);
+    setTimeout(()=>burst(fx.width*0.3, fx.height*0.3), 200);
+    setTimeout(()=>burst(fx.width*0.7, fx.height*0.3), 400);
+    startFireworks();
+    await addToWall(name);
+  });
+  document.getElementById('nameInput').addEventListener('click', e => e.stopPropagation());
+
+  document.getElementById('replayBtn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    idx = 0; showScene(idx);
+  });
+
+  showScene(0);
+</script>
+
+</body>
+</html>
